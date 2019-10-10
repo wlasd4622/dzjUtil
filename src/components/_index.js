@@ -5,89 +5,109 @@ let path = require("path");
 let axios = require("axios");
 let request = require("request");
 let md5 = require("md5");
-let cookie = `crmvip=""; dk_cookie=""; www58com="UserID=49052901856015&UserName=wlasd4622"; 58cooper="userid=49052901856015&username=wlasd4622"; 58uname=wlasd4622; id58=c5/nn12PTVc14SkdinxcAg==; 58tj_uuid=556d0f30-4077-445c-bfe4-b6cf0ab0347a; new_uv=1; utm_source=; spm=; init_refer=; new_session=0; als=0; commontopbar_new_city_info=1%7C%E5%8C%97%E4%BA%AC%7Cbj; commontopbar_ipcity=bj%7C%E5%8C%97%E4%BA%AC%7C0; post_uuid=3c87633f-b35c-4f07-aa15-674f3fc1f6a1; JSESSIONID=EE9459EC1095E347C029405A9C0C07CD; crmvip=""; dk_cookie=""; PPU="UID=49052901856015&UN=wlasd4622&TT=fc6572a60bfe2658cb22834889221591&PBODY=TQinwywZ44rPMKbkXc8j2rjsnOzdefGylQkDs9NsLFMrNN3yrumohTdr32Uf-loLmkIAjlpLhvDnZW9XaCOiHRSzxZnTIdpPbr_-m0nDcjAPCFZF0YE5SM8vyRt2BPoWcDX6NpzPb10pVH75NibKIJzY0DySEK9HVgG5fUkCRkA&VER=1"; www58com="UserID=49052901856015&UserName=wlasd4622"; 58cooper="userid=49052901856015&username=wlasd4622"; 58uname=wlasd4622; id58=c5/nn12PTVc14SkdinxcAg==; 58tj_uuid=556d0f30-4077-445c-bfe4-b6cf0ab0347a; new_uv=1; utm_source=; spm=; init_refer=; new_session=0; als=0; commontopbar_new_city_info=1%7C%E5%8C%97%E4%BA%AC%7Cbj; commontopbar_ipcity=bj%7C%E5%8C%97%E4%BA%AC%7C0; post_uuid=3c87633f-b35c-4f07-aa15-674f3fc1f6a1; JSESSIONID=EE9459EC1095E347C029405A9C0C07CD; post_uuid=3c87633f-b35c-4f07-aa15-674f3fc1f6a1; xxzl_deviceid=zyoeOyKkNNl26g4cNTfwexPH7mRhqLfEdpB1Vg0UH2htS%2Bm59AGWtdewXVBIBHD0; xxzl_smartid=1582c24bffc2a16600638c39be2af3bf; PPU="UID=49052901856015&UN=wlasd4622&TT=b25b6a0d30d9f50805e99a7ed468d98e&PBODY=Ng7wb7FEe_KcgFkRsQ-j9sk4dcjH0i7rJCQs4p2CGuPFO8CtpF-LoX7nqCgnjpxfo_wXeLurjM1FbVNdN6jdmLKqMGHHEkY8jZWed5C5oJg0k36rZYetyxZoxoGrM-namWfhxi9hOiJ925xZfmJpLzm1BQTGHe50FVx2b5nkdEY&VER=1"; commontopbar_new_city_info=1%7C%E5%8C%97%E4%BA%AC%7Cbj`;
+let mysql = require("mysql");
+let cookie = `xxzl_deviceid=beKXOF3yLsn0V3FntbpAK7%2BNmn9qMJ4nikC0I8FUH%2BQCOQunpYcC%2BB9F4d2OzlR7; crmvip=""; dk_cookie=""; PPU="UID=49052901856015&UN=wlasd4622&TT=17c53fec198a52ee152438f8007411ac&PBODY=Xmp10Os6E091Cpw3lX_4cXoFJkYgjP5Qkmg18WSibb626lpXDCTgiCDtUkeQtl_bAELaBat2DC4mK_-GyKKrqUuOSC7L5ax61B6YCKIXwOkCWlymgwGKi1fpdYKxK151pStvHb5rnGuYKOHyfpDJgR4D7NkJYeTxUSA3B30CRJs&VER=1"; www58com="UserID=49052901856015&UserName=wlasd4622"; 58cooper="userid=49052901856015&username=wlasd4622"; 58uname=wlasd4622; id58=c5/nn12dZ5pNg14dpwJ2Ag==; 58tj_uuid=cdb09116-f6aa-4757-9eca-eedc250c61e1; new_uv=1; utm_source=; spm=; init_refer=https%253A%252F%252Fpassport.58.com%252Flogin%252F%253Fpath%253Dhttps%25253A%25252F%25252Fpost.58.com%25252Fcommercial%25252F37%25252F14%25252Fs5%25253FPGTID%25253D0d000000-0000-0fbf-3e4f-dab01a539fda%252526ClickID%25253D1; als=0; xxzl_smartid=1582c24bffc2a16600638c39be2af3bf; new_session=0; commontopbar_new_city_info=1%7C%E5%8C%97%E4%BA%AC%7Cbj; commontopbar_ipcity=bj%7C%E5%8C%97%E4%BA%AC%7C0`;
 let data = {
-  hyFacilityList: [{
-      value: '1',
-      label: '客梯',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/1@2x.png'
+  hyFacilityList: [
+    {
+      value: "1",
+      label: "客梯",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/1@2x.png"
     },
     {
-      value: '2',
-      label: '货梯',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/2@2x.png'
+      value: "2",
+      label: "货梯",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/2@2x.png"
     },
     {
-      value: '3',
-      label: '扶梯',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/3@2x.png'
+      value: "3",
+      label: "扶梯",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/3@2x.png"
     },
     {
-      value: '4',
-      label: '停车位',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/4@2x.png'
+      value: "4",
+      label: "停车位",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/4@2x.png"
     },
     {
-      value: '5',
-      label: '天然气',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/5@2x.png'
+      value: "5",
+      label: "天然气",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/5@2x.png"
     },
     {
-      value: '6',
-      label: '网络',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/6@2x.png'
+      value: "6",
+      label: "网络",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/6@2x.png"
     },
     {
-      value: '7',
-      label: '暖气',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/7@2x.png'
+      value: "7",
+      label: "暖气",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/7@2x.png"
     },
     {
-      value: '8',
-      label: '中央空调',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/8@2x.png'
+      value: "8",
+      label: "中央空调",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/8@2x.png"
     },
     {
-      value: '9',
-      label: '上水',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/9@2x.png'
+      value: "9",
+      label: "上水",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/9@2x.png"
     },
     {
-      value: '10',
-      label: '下水',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/10@2x.png'
+      value: "10",
+      label: "下水",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/10@2x.png"
     },
     {
-      value: '11',
-      label: '排烟',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/11@2x.png'
+      value: "11",
+      label: "排烟",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/11@2x.png"
     },
     {
-      value: '12',
-      label: '排污',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/12@2x.png'
+      value: "12",
+      label: "排污",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/12@2x.png"
     },
     {
-      value: '13',
-      label: '管煤',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/13@2x.png'
+      value: "13",
+      label: "管煤",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/13@2x.png"
     },
     {
-      value: '14',
-      label: '380V',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/14@2x.png'
+      value: "14",
+      label: "380V",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/14@2x.png"
     },
     {
-      value: '15',
-      label: '可明火',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/15@2x.png'
+      value: "15",
+      label: "可明火",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/15@2x.png"
     },
     {
-      value: '16',
-      label: '外摆区',
-      url: 'https://shop-cdn.ygke.com/qiniuup/pcimg/icon/16@2x.png'
+      value: "16",
+      label: "外摆区",
+      url: "https://shop-cdn.ygke.com/qiniuup/pcimg/icon/16@2x.png"
     }
   ],
+  db: {
+    datarefresh: {
+      host: "101.201.49.69",
+      user: "refresh",
+      password: "Dianzhijia@1",
+      port: "3306",
+      database: "datarefresh"
+    }
+  },
+  initDB() {
+    let keys = Object.keys(this.db);
+    for (let index = 0; index < keys.length; index++) {
+      const dbName = keys[index];
+      let dbConfig = this.db[dbName];
+      dbConfig.useConnectionPooling = true;
+      this.db[dbName].pool = mysql.createPool(dbConfig);
+    }
+  },
   getExecutablePath() {
     let workSpaceSrc = "";
     let executablePath = "";
@@ -105,7 +125,7 @@ let data = {
     } else {
       workSpaceSrc = "/workspace/html/dzjUtil";
     }
-    executablePath = `${workSpaceSrc}/chrome/mac/Chromium.app/Contents/MacOS/Chromium`;
+    executablePath = `${workSpaceSrc}/chrome/Chromium.app/Contents/MacOS/Chromium`;
     return executablePath;
   },
   async setCookie(cookies_str = "", domain, page = this.page) {
@@ -126,11 +146,14 @@ let data = {
     );
   },
   async runPuppeteer(options = {}) {
-    // let executablePath = this.getExecutablePath();
-    // console.log(executablePath);
+    this.log(`>>>runPuppeteer`);
+    let executablePath = this.getExecutablePath();
+    console.log(executablePath);
     this.browser = await puppeteer.launch(
-      Object.assign({}, {
-          // executablePath,
+      Object.assign(
+        {},
+        {
+          executablePath,
           headless: false,
           args: ["--start-maximized", "--disable-infobars"]
         },
@@ -146,6 +169,7 @@ let data = {
     });
   },
   async closePuppeteer() {
+    this.log(`>>>closePuppeteer`);
     try {
       if (this.browser) {
         await this.browser.close();
@@ -155,6 +179,7 @@ let data = {
     }
   },
   async goto(url, selector, page = this.page) {
+    this.log(`>>>goto`);
     await page.goto(url, {
       waitUntil: "domcontentloaded"
     });
@@ -196,7 +221,9 @@ let data = {
     });
   },
   async watchHandle() {
+    this.log(`>>>watchHandle`);
     do {
+      this.log(`>>>watchHandle:do`);
       try {
         let pages = await this.browser.pages();
         let commercialPage = pages.find(item =>
@@ -212,6 +239,7 @@ let data = {
     } while (true);
   },
   async appendHtml(page = this.page) {
+    this.log(`>>>appendHtml`);
     await page.addScriptTag({
       url: "https://wlasd4622.github.io/dianzhijia/common/58.js"
     });
@@ -225,8 +253,8 @@ let data = {
           <div class="rows_wrap clearfix">
             <div class="rows_content">
               <div class="tip"></div>
-              <div class="input_text_wrap" name="title" style="position: relative;width: 200px;">
-                <input type="password" id="dzjPassword" tabindex="44" maxlength="30" style="width: 100%;" value="765245" placeholder="请输入权限密码">
+              <div class="input_text_wrap" style="position: relative;width: 200px;">
+                <input type="password" id="dzjPassword" tabindex="44" maxlength="30" style="width: 100%;" value="" placeholder="请输入权限密码">
               </div>
             </div>
             <div class="rows_title"><span>权限密码</span></div>
@@ -236,8 +264,8 @@ let data = {
           <div class="rows_wrap clearfix">
             <div class="rows_content">
               <div class="tip"></div>
-              <div class="input_text_wrap" name="title" style="position: relative;width: 200px;">
-                <input type="number" id="dzjId" tabindex="44" maxlength="30" style="width: 100%;" value="765245" placeholder="请输入id，进行自动填充">
+              <div class="input_text_wrap" style="position: relative;width: 200px;">
+                <input type="number" id="dzjId" tabindex="44" maxlength="30" style="width: 100%;" value="" placeholder="请输入id，进行自动填充">
               </div>
               <span class="fill-btn" style="margin-top: 4px;
               margin-left: 5px;
@@ -279,7 +307,10 @@ let data = {
       $("#postForm").prepend(html);
       $("body").prepend(loadingHtml);
       localStorage.removeItem("dzjTaskResult");
-      window.fillBtn = function () {
+      //set password
+      $("#dzjPassword").val(localStorage.getItem("dzjPassword"));
+
+      window.fillBtn = function() {
         let dzjPassword = $("#dzjPassword").val();
         let dzjId = $("#dzjId").val();
         if (!dzjPassword) {
@@ -290,7 +321,7 @@ let data = {
           //进行搜索，并填充
           localStorage.setItem(
             "dzjTask",
-            JSON.stringify({
+            window.JSON.stringify({
               dzjPassword,
               dzjId,
               date: new Date().getTime()
@@ -302,7 +333,7 @@ let data = {
             let dzjTaskResult = localStorage.getItem("dzjTaskResult");
             if (dzjTaskResult) {
               localStorage.removeItem("dzjTaskResult");
-              let data = dzjTaskResult.split('||')[1];
+              let data = dzjTaskResult.split("||")[1];
               window._data = data;
               dzjTaskResult = dzjTaskResult.match(/^\d+/)[0];
 
@@ -311,22 +342,27 @@ let data = {
               if (/^2/.test(dzjTaskResult)) {
                 //
               } else if (/^3/.test(dzjTaskResult)) {
-                $(".dzjLoading div").text({
-                  "300": "数据查询成功，正在自动填充，上传图片...",
-                  "301": "数据查询成功，正在自动填充，图片上传成功..."
-                } [dzjTaskResult]);
-                if (dzjTaskResult == '301' && data) {
-                  window.addHouseInfoData(data, '15011099999');
+                localStorage.setItem("dzjPassword", $("#dzjPassword").val());
+                $(".dzjLoading div").text(
+                  {
+                    "300": "数据查询成功，正在自动填充，上传图片...",
+                    "301": "数据查询成功，正在自动填充，图片上传成功..."
+                  }[dzjTaskResult]
+                );
+                if (dzjTaskResult == "301" && data) {
+                  window.addHouseInfoData(data, "");
                   setTimeout(() => {
                     $(".dzjLoading").hide();
                   }, 500);
                 }
               } else if (/^4/.test(dzjTaskResult)) {
-                $(".dzjLoading div").text({
-                  "400": "权限密码错误",
-                  "401": "没有搜索到数据",
-                  "402": "图片上传失败"
-                } [dzjTaskResult]);
+                $(".dzjLoading div").text(
+                  {
+                    "400": "权限密码错误",
+                    "401": "没有搜索到数据",
+                    "402": "图片上传失败"
+                  }[dzjTaskResult]
+                );
                 setTimeout(() => {
                   $(".dzjLoading").hide();
                 }, 2000);
@@ -341,10 +377,11 @@ let data = {
     });
   },
   formatData(data) {
+    this.log(`>>>formatData`);
     let newData = {};
     try {
       // 供求类型
-      newData._type = data.transfer_type == 4 ? '出租' : '转让';
+      newData._type = data.transfer_type == 4 ? "出租" : "转让";
       // 标题
       newData.title = `(${newData._type}) ${data.store_info_title}`;
       // 店铺图片
@@ -352,7 +389,7 @@ let data = {
       // 租金
       newData.moneyNum = data.rent;
       // 租金单位
-      newData.moneyNumUnit = '元/月';
+      newData.moneyNumUnit = "元/月";
       // 出租
       // newData.numChuZu = null;
       // 出租单位
@@ -364,15 +401,15 @@ let data = {
       // 转让费
       newData.transferFee = parseFloat(data.transfer_price / 10000).toFixed(2);
       // 转让费单位
-      newData.transferFeeUnit = '万元';
+      newData.transferFeeUnit = "万元";
       // 面积
       newData.area = data.store_acreage;
       // 面积单位
       // newData.areaUnit = null;
       // 商铺类型
-      newData.type = '临街门面';
+      newData.type = "临街门面";
       // 是否临街
-      newData.isStreet = '临街';
+      newData.isStreet = "临街";
 
       // 楼层总楼层
       newData.totalFloot = data.total_floor;
@@ -383,7 +420,7 @@ let data = {
       } else if (data.floor_type == 2) {
         //多层
         // 楼层
-        newData.curFloor = `${data.start_floor}-${data.end_floor}层`
+        newData.curFloor = `${data.start_floor}-${data.end_floor}层`;
       }
       // 面宽
       newData.sWidth = data.face_width;
@@ -391,8 +428,8 @@ let data = {
       newData.sDeep = data.depth;
       // 层高
       newData.sHeight = data.floor_height;
-      // 状态
-      newData.status = ['经营中', '空置中'][parseInt(data.business_state || 0)];
+      // 状态状态
+      newData.status = data.business_state == 2 ? "空置中" : "经营中";
       // 付款方式(付)
       newData.payType1 = data.pay_number;
       // 付款方式(押)
@@ -425,30 +462,33 @@ let data = {
       newData.peitao = [];
       if (data.facility_value && data.facility_value.length) {
         for (let i = 0; i < data.facility_value.length; i++) {
-          let p = this.hyFacilityList.find(item => item.value == data.facility_value[i]);
+          let p = this.hyFacilityList.find(
+            item => item.value == data.facility_value[i]
+          );
           if (p) {
-            newData.peitao.push(p.label)
+            newData.peitao.push(p.label);
           }
         }
       }
       // 描述
       newData.describe = data.store_describe;
     } catch (err) {
-      this.log(err)
+      this.log(err);
     }
     return newData;
   },
   async getcityName(id) {
-    sql = `	SELECT * from t_area WHERE id=${id}`
+    sql = `	SELECT * from t_area WHERE id=${id}`;
   },
   async getDataById(id = 0) {
+    this.log(`>>>getDataById`);
     return new Promise(async (resolve, reject) => {
       axios({
-          url: "https://api.dianzhijia.com/api/open/transferstore/" + id,
-          headers: {
-            accept: `application/vnd.dpexpo.v1+json`
-          }
-        })
+        url: "https://api.dianzhijia.com/api/open/transferstore/" + id,
+        headers: {
+          accept: `application/vnd.dpexpo.v1+json`
+        }
+      })
         .then(res => {
           if (res.status === 200 && res.data && res.data.data) {
             resolve(this.formatData(res.data.data));
@@ -462,6 +502,7 @@ let data = {
     });
   },
   async down(url = "") {
+    this.log(`>>>down`);
     return new Promise((resolve, reject) => {
       try {
         if (!fs.existsSync(`${process.cwd()}/images`)) {
@@ -471,14 +512,14 @@ let data = {
         var writeStream = fs.createWriteStream(imgSrc);
         var readStream = request(url);
         readStream.pipe(writeStream);
-        readStream.on("end", function (data) {
+        readStream.on("end", function(data) {
           console.log("文件下载成功");
         });
-        readStream.on("error", function () {
+        readStream.on("error", function() {
           console.log("错误信息:" + err);
           reject(err);
         });
-        writeStream.on("finish", function () {
+        writeStream.on("finish", function() {
           writeStream.end();
           resolve(imgSrc);
         });
@@ -489,15 +530,13 @@ let data = {
     });
   },
   async downImage(imgArr = []) {
+    this.log(`>>>downImage`);
     for (let i = 0; i < imgArr.length; i++) {
       await this.down(imgArr[i]);
     }
   },
-  async verificationPassword(pw) {
-    this.log(`>>>verificationPassword:${pw}`);
-    return true;
-  },
   async uploadImage(imgArr = [], page = this.page) {
+    this.log(`>>>uploadImage`);
     await page.evaluate(() => {
       $("#imgUpload input").attr("id", "imgUploadInput");
     });
@@ -509,8 +548,10 @@ let data = {
     await imgUploadInput.uploadFile(...srcArr);
   },
   async watchPageTask(page = this.page) {
+    this.log(`>>>watchPageTask`);
     // this.log(page.url())
     do {
+      this.log(`>>>watchPageTask:do`);
       let dzjTask = await page.evaluate(() => {
         return localStorage.getItem("dzjTask");
       });
@@ -537,19 +578,22 @@ let data = {
           if (data) {
             //查询到数据，开始填充，并下载图片上传图片
             await page.evaluate(data => {
-              localStorage.setItem(
-                "dzjTaskResult",
-                `300`
-              );
+              localStorage.setItem("dzjTaskResult", `300`);
             }, data);
             // 下载图片
             await this.downImage(data.picList);
             //上传图片
-            console.log(666);
             try {
               await this.uploadImage(data.picList, page);
               await page.evaluate(data => {
-                localStorage.setItem("dzjTaskResult", `301||${encodeURIComponent(JSON.stringify(data))}`);
+                try {
+                  localStorage.setItem(
+                    "dzjTaskResult",
+                    `301||${encodeURIComponent(window.JSON.stringify(data))}`
+                  );
+                } catch (err) {
+                  console.log(err);
+                }
               }, data);
             } catch (err) {
               await page.evaluate(() => {
@@ -563,33 +607,119 @@ let data = {
     } while (true);
   },
   async commercialPageHandle(page = this.page) {
+    this.log(`>>>commercialPageHandle`);
+
     let flag = await page.evaluate(() => {
       return !!window.dzjFlag;
     });
     if (flag) return false;
+    console.log(22);
     await page.evaluate(() => {
       window.dzjFlag = true;
     });
+    console.log(33);
     await this.appendHtml(page);
+    console.log(44);
     this.watchPageTask(page);
   },
+  async watchPage() {
+    this.log(`>>>watchPage`);
+    do {
+      this.log(`>>>watchPage:do`);
+      let pages = await this.browser.pages();
+      for (let i = 0; i < pages.length; i++) {
+        await pages[i].setViewport({
+          width: 1200,
+          height: 800
+        });
+      }
+
+      await this.sleep(2000);
+    } while (true);
+  },
+  getConnection(name) {
+    let that = this;
+    this.log(`>>>getConnection`);
+    return new Promise((resolve, reject) => {
+      try {
+        this.db[name].pool.getConnection(function(err, connection) {
+          if (err) {
+            that.log(err);
+            reject(err);
+          } else {
+            resolve(connection);
+          }
+        });
+      } catch (error) {
+        this.log(error);
+        reject(error);
+      }
+    });
+  },
+  async execSql(nameIndex, sql) {
+    this.log(">>>execSql");
+    let name = ["datarefresh", "bjhyty", "dianzhijia", "bs", "pu"][nameIndex];
+    this.log(name);
+    this.log(sql);
+    let connection = await this.getConnection(name);
+    this.log(`threadId:${connection.threadId}`);
+    return new Promise((resolve, reject) => {
+      try {
+        connection.query(sql, function(err, value) {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(value);
+          }
+        });
+        connection.release();
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
+  async verificationPassword(password = "") {
+    this.log(`>>>verificationPassword`);
+    if (!password) return false;
+    let sql = `SELECT * from post_authority WHERE disabled=1 and password='${password}'`;
+    let result = await this.execSql(0, sql);
+    return !!result.length;
+  },
   async main() {
-    // await this.closePuppeteer();
-    await this.runPuppeteer();
-    await this.setCookie(cookie, ".58ganji.com");
-    await this.setCookie(cookie, ".58.com");
-    await this.setCookie(cookie, ".post.58.com");
-    await this.setCookie(cookie, ".my.58.com");
-    await this.setCookie(cookie, ".vip.58.com");
-    await this.setCookie(cookie, ".anjuke.com");
-    await this.setCookie(cookie, ".vip.58ganji.com");
-    // await this.goto('https://passport.58.com/login/');
-    await this.goto(
-      "https://post.58.com/commercial/37/14/s5?PGTID=0d000000-0000-0fbf-3e4f-dab01a539fda&ClickID=1"
-    );
-    this.watchHandle();
+    this.log(`>>>main`);
+    try {
+      await this.initDB();
+      await this.closePuppeteer();
+      await this.runPuppeteer();
+      await this.setCookie(cookie, ".58ganji.com");
+      await this.setCookie(cookie, ".58.com");
+      await this.setCookie(cookie, ".post.58.com");
+      await this.setCookie(cookie, ".my.58.com");
+      await this.setCookie(cookie, ".vip.58.com");
+      await this.setCookie(cookie, ".anjuke.com");
+      await this.setCookie(cookie, ".vip.58ganji.com");
+      // await this.goto('https://passport.58.com/login/');
+      await this.goto(
+        "https://post.58.com/commercial/37/14/s5?PGTID=0d000000-0000-0fbf-3e4f-dab01a539fda&ClickID=1"
+      );
+      await this.page.waitForSelector("body");
+      await this.sleep(1100);
+      // let fn = () => {
+      //   alert(1)
+      // }
+      // await this.page.evaluate(() => {
+      //   window.alert(2)
+      // })
+      // await this.page.evaluate(encodeURIComponent(fn.toString()))
+      this.watchPage();
+      this.watchHandle();
+    } catch (err) {
+      console.log("--error--");
+      console.log(err);
+    }
   }
 };
 
-// export default data;
-module.exports = data;
+export default data;
+// module.exports = data;
+// 765245

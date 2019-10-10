@@ -6,7 +6,7 @@ const NwBuilder = require('nw-builder')
 
 const uitls = require('./utils')
 const config = require('../config/')
-const nwconfig = require('../config/nw').build 
+const nwconfig = require('../config/nw').build
 const nwmanifest = require('../config/nw-manifest')
 
 const dependencies = require('../package.json').dependencies

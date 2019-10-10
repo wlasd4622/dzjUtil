@@ -30,11 +30,18 @@
   "dependencies": {
     "axios": "^0.19.0",
     "babel-polyfill": "^6.26.0",
+    "http": "0.0.0",
+    "i": "^0.3.6",
     "jquery": "^3.4.1",
+    "json-stringify": "^1.0.0",
     "md5": "^2.2.1",
     "moment": "^2.24.0",
+    "mysql": "^2.17.1",
+    "npm": "^6.11.3",
     "puppeteer": "^1.13.0",
     "request": "^2.88.0",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0",
     "stream-wormhole": "^1.0.4",
     "vue": "^2.3.3",
     "vue-router": "^2.3.1"
