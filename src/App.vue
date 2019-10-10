@@ -23,6 +23,8 @@ body,
   height: 100%;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+  display: flex;
 }
 .header {
   padding: 10px 20px;
@@ -38,7 +40,7 @@ body,
   display: flex;
   line-height: 30px;
   height: 30px;
-  box-shadow: 3px 2px 3px 3px rgba(0, 0, 0, 0.05);
+  box-shadow: 3px 3px 7px 0px rgba(0, 0, 0, 0.22);
 }
 .htitle {
   overflow: hidden;

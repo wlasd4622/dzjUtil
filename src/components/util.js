@@ -6,7 +6,7 @@ let axios = require("axios");
 let request = require("request");
 let md5 = require("md5");
 let mysql = require("mysql");
-let cookie = `xxzl_deviceid=beKXOF3yLsn0V3FntbpAK7%2BNmn9qMJ4nikC0I8FUH%2BQCOQunpYcC%2BB9F4d2OzlR7; crmvip=""; dk_cookie=""; PPU="UID=49052901856015&UN=wlasd4622&TT=17c53fec198a52ee152438f8007411ac&PBODY=Xmp10Os6E091Cpw3lX_4cXoFJkYgjP5Qkmg18WSibb626lpXDCTgiCDtUkeQtl_bAELaBat2DC4mK_-GyKKrqUuOSC7L5ax61B6YCKIXwOkCWlymgwGKi1fpdYKxK151pStvHb5rnGuYKOHyfpDJgR4D7NkJYeTxUSA3B30CRJs&VER=1"; www58com="UserID=49052901856015&UserName=wlasd4622"; 58cooper="userid=49052901856015&username=wlasd4622"; 58uname=wlasd4622; id58=c5/nn12dZ5pNg14dpwJ2Ag==; 58tj_uuid=cdb09116-f6aa-4757-9eca-eedc250c61e1; new_uv=1; utm_source=; spm=; init_refer=https%253A%252F%252Fpassport.58.com%252Flogin%252F%253Fpath%253Dhttps%25253A%25252F%25252Fpost.58.com%25252Fcommercial%25252F37%25252F14%25252Fs5%25253FPGTID%25253D0d000000-0000-0fbf-3e4f-dab01a539fda%252526ClickID%25253D1; als=0; xxzl_smartid=1582c24bffc2a16600638c39be2af3bf; new_session=0; commontopbar_new_city_info=1%7C%E5%8C%97%E4%BA%AC%7Cbj; commontopbar_ipcity=bj%7C%E5%8C%97%E4%BA%AC%7C0`;
+var os = require("os");
 let data = {
   hyFacilityList: [
     {
@@ -109,46 +109,22 @@ let data = {
     }
   },
   getExecutablePath() {
-    let workSpaceSrc = "";
     let executablePath = "";
-    if (path.dirname(process.execPath).includes("dzjUtil.app")) {
-      let arr = path
-        .dirname(process.execPath)
-        .split("dzjUtil.app")[0]
-        .trim()
-        .replace(/^\//, "")
-        .replace(/\/$/, "")
-        .split("/");
-      arr.pop();
-      arr.pop();
-      workSpaceSrc = `/${arr.join("/")}`;
+    if (os.platform().includes("win32")) {
+      executablePath = `${this.dirSrc()}/chrome/win/chrome.exe`;
     } else {
-      workSpaceSrc = "/workspace/html/dzjUtil";
+      executablePath = `${this.dirSrc()}/chrome/mac/Chromium.app/Contents/MacOS/Chromium`;
     }
-    executablePath = `${workSpaceSrc}/chrome/Chromium.app/Contents/MacOS/Chromium`;
     return executablePath;
   },
-  async setCookie(cookies_str = "", domain, page = this.page) {
-    this.log(`>>>setCookie`);
-    let cookies = cookies_str.split(";").map(pair => {
-      let name = pair.trim().slice(0, pair.trim().indexOf("="));
-      let value = pair.trim().slice(pair.trim().indexOf("=") + 1);
-      return {
-        name,
-        value,
-        domain
-      };
-    });
-    return Promise.all(
-      cookies.map(pair => {
-        return page.setCookie(pair);
-      })
-    );
+  dirSrc() {
+    return path.dirname(process.execPath).match(/^.*?dzjUtil/)[0];
   },
   async runPuppeteer(options = {}) {
     this.log(`>>>runPuppeteer`);
     let executablePath = this.getExecutablePath();
     console.log(executablePath);
+    this.browser = null;
     this.browser = await puppeteer.launch(
       Object.assign(
         {},
@@ -243,7 +219,7 @@ let data = {
     await page.addScriptTag({
       url: "https://wlasd4622.github.io/dianzhijia/common/58.js"
     });
-    await page.evaluate(() => {
+    await page.evaluate((password = "") => {
       let html = `
       <div class="block_wrap">
         <div class="block_title">
@@ -308,7 +284,7 @@ let data = {
       $("body").prepend(loadingHtml);
       localStorage.removeItem("dzjTaskResult");
       //set password
-      $("#dzjPassword").val(localStorage.getItem("dzjPassword"));
+      $("#dzjPassword").val(password || localStorage.getItem("dzjPassword"));
 
       window.fillBtn = function() {
         let dzjPassword = $("#dzjPassword").val();
@@ -374,7 +350,7 @@ let data = {
           }, 200);
         }
       };
-    });
+    }, this.catchData.password);
   },
   formatData(data) {
     this.log(`>>>formatData`);
@@ -566,6 +542,8 @@ let data = {
             localStorage.setItem("dzjTaskResult", 400);
           });
         } else {
+          this.catchData.password = dzjTask.dzjPassword;
+          await this.updateCarchData();
           //密码正确，开始搜索
           let data = null;
           try {
@@ -632,10 +610,41 @@ let data = {
           width: 1200,
           height: 800
         });
+        if (pages[i].url().includes("my.58")) {
+          console.log(">>>>>>>>>>>>>>>>>>");
+          let cookies = await this.getCookie(pages[i]);
+          this.log(cookies);
+          if (cookies) {
+            this.catchData.cookie = cookies;
+            this.updateCarchData();
+          }
+        }
       }
 
-      await this.sleep(2000);
+      await this.sleep(3000);
     } while (true);
+  },
+  async getCookie(page = this.page) {
+    return await page.evaluate(() => {
+      return document.cookie;
+    });
+  },
+  async setCookie(cookies_str = "", domain, page = this.page) {
+    this.log(`>>>setCookie`);
+    let cookies = cookies_str.split(";").map(pair => {
+      let name = pair.trim().slice(0, pair.trim().indexOf("="));
+      let value = pair.trim().slice(pair.trim().indexOf("=") + 1);
+      return {
+        name,
+        value,
+        domain
+      };
+    });
+    return Promise.all(
+      cookies.map(pair => {
+        return page.setCookie(pair);
+      })
+    );
   },
   getConnection(name) {
     let that = this;
@@ -685,32 +694,50 @@ let data = {
     let result = await this.execSql(0, sql);
     return !!result.length;
   },
+  /**
+   * 初始化缓存目录
+   */
+  async initCatchDir() {
+    this.log(`>>>initCatchDir`);
+    let catchDir = this.dirSrc() + "/58catch";
+    this.log(catchDir);
+    if (!fs.existsSync(catchDir)) {
+      fs.mkdirSync(catchDir);
+    }
+    this.catchFile = `${catchDir}/catch`;
+
+    if (!fs.existsSync(this.catchFile)) {
+      fs.writeFileSync(this.catchFile, "");
+    }
+
+    let content = fs.readFileSync(this.catchFile).toString();
+    this.catchData = JSON.parse(decodeURIComponent(content) || '""') || {};
+  },
+  async updateCarchData() {
+    fs.writeFileSync(
+      this.catchFile,
+      encodeURIComponent(JSON.stringify(this.catchData))
+    );
+  },
+  async init() {
+    await this.initCatchDir();
+  },
   async main() {
     this.log(`>>>main`);
     try {
       await this.initDB();
       await this.closePuppeteer();
       await this.runPuppeteer();
-      await this.setCookie(cookie, ".58ganji.com");
-      await this.setCookie(cookie, ".58.com");
-      await this.setCookie(cookie, ".post.58.com");
-      await this.setCookie(cookie, ".my.58.com");
-      await this.setCookie(cookie, ".vip.58.com");
-      await this.setCookie(cookie, ".anjuke.com");
-      await this.setCookie(cookie, ".vip.58ganji.com");
-      // await this.goto('https://passport.58.com/login/');
-      await this.goto(
-        "https://post.58.com/commercial/37/14/s5?PGTID=0d000000-0000-0fbf-3e4f-dab01a539fda&ClickID=1"
-      );
+      if (this.catchData.cookie) {
+        await this.setCookie(this.catchData.cookie, ".58.com");
+        await this.setCookie(this.catchData.cookie, ".post.58.com");
+        await this.setCookie(this.catchData.cookie, ".my.58.com");
+        await this.goto("https://my.58.com");
+      } else {
+        await this.goto("https://passport.58.com/login/");
+      }
       await this.page.waitForSelector("body");
       await this.sleep(1100);
-      // let fn = () => {
-      //   alert(1)
-      // }
-      // await this.page.evaluate(() => {
-      //   window.alert(2)
-      // })
-      // await this.page.evaluate(encodeURIComponent(fn.toString()))
       this.watchPage();
       this.watchHandle();
     } catch (err) {
@@ -721,5 +748,4 @@ let data = {
 };
 
 export default data;
-// module.exports = data;
 // 765245
